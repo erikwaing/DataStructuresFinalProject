@@ -19,24 +19,36 @@
 \begin{document}         
 \maketitle
 
-For our final project, we want to investigate a linear programming approach to solving offline dynamic optimality. Our approach follows to the ``Points on the Plane'' open problem. There is a fairly simple integer linear program that represents the problem of finding the minimum number of additional points that would make a two-dimensional set of points arborally satisfied. An integer linear programming formulation of the problem is:
+We want to investigate a linear programming (LP) approach to offline dynamic opimality. We will focus on the ``points in the plane" interpretation of the problem, as the geometric view lends itself nicely to an LP setup. A simple linear programming formulation of the problem is: 
 
-Suppose we are given a set of points $a_i = (x_i, y_i)$ in the $xy$ plane. Then we can think of the grid in the plane with horizontal lines and vertical lines going through the points $a_i$. 
+Suppose we are given a set of $n$ points $a_i = (x_i, y_i)$ in the $xy$ plane. Then we can think of the grid in the plane formed by all horizontal and vertical lines going through the points $a_i$. Note that since there are at most $n$ different $x$ values and $n$ different $y$ values, there are $n^2$ intersection points to consider (it is not hard to see that we only need these intersection points). We construct indicator variables $b_{jk}$, where $b_{jk} = 1$ if the grid point in the $j$th row and $k$th column is present, and 0 otherwise. Thus, the problem can be restated as an integer linear program (ILP) where the objective is:
 
-Let each point of intersection be a variable $b_{ij} = (x_i, y_j)$. Then we want to:
+\[ \min \sum_{j,k} b_{jk} \]
 
-\[ \min \sum_{i,j} b_{ij} \]
+subject to the following constraints:
+\begin{align}
+\sum_{\text{points on the edges of the rectangle }a_i, a_j} b_{kl} &\geq 1 \hspace{.3in} \forall \hspace{.1in} \text{valid rectangles} \hspace{.1in} a_i, a_j\\
+b_{ij} + b_{kl} - \sum_{\text{points in edge of rectangle }b_{ij}, b_{kl}} &\leq 1 \hspace{.3in}  \forall \hspace{.1in} \text{valid rectangles} \hspace{.1in} b_{ij}, b_{kl}
+\end{align}
 
-such that 
-\[  \sum_{\text{points in edge of rectangle }a_i, a_j} b_{kl} \geq 1 \]
-for every $i$ and $j$ such that $a_i$ and $a_j$ for a valid rectangle. Then an additional constraint should say that
+(1) states that each rectangle defined by the given points $a_i$  is satisfied, and (2) ensures that all rectangles created by additional points are satisfied. Note that for constraint (1) we only consider points along the edges of a rectangle, whereas the original problem considers all points in the interior of the rectangle as well. We make this change for simplicity, as it is not hard to show that rectangles can be optimally satisfied with points on the edges. Clearly, we must specify that the variables be integer-valued, as we want them to act as indicator variables.
 
-\[ b_{ij} + b_{kl} - \sum_{\text{points in edge of rectangle }b_{ij}, b_{kl}} \leq 1 \] 
+The goal is to simplify these constraints so that a rounding scheme can be applied to the LP relaxation of the problem. Our initial attempts at simplifying certain constraints tended to make other constraints more complicated, so we suspect that traditional rounding methods will not work. We propose taking a step back and analyzing the space created by the constraints, and performing experiments on the integrality gap (distance between the optimal integer solution and the optimal solution to the relaxed program). 
 
-\[ b_{ij} \in \{ 0, 1 \} \]
+If the experiments show promise, we would like to see if we can represent the polytope in a lower dimensional space, if we could characterize the vertices, and also explore its dual. The dual might also yield some insight into the arboral satisfaction properties that were hidden in the primal form. This could help us develop approximation algorithms based on the relaxation or even give some combinatorial algorithms based on the dual of the linear program. 
 
-The first constraint says that each rectangle with the given points is satisfied, and the second says that rectangles created by additional points are satisfied. There are some ways to make some of the constraints simpler, but small attempts have shown that simplifying one constraint makes other constraints more complicated, so the typical methods that we learned for developing rounding schemes in relaxations do not seem to yield good approximation algorithms. We want to first take a step back and analyze the space created by the constraints and try some experiments to see the integrality gap between the optimal integer linear programming solution and the relaxed linear program. 
-
-The experiments might rule out the approach completely, or they might give us indication that some work should still be done. If the experiments show some promise, we want to explore the polytope created by the constraints of the linear program. We would like to see if we can represent the polytope in a lower dimensional space, if we could characterize the vertices, and also explore its dual. The dual might also yield some insight into the arboral satisfaction properties that were hidden in the primal form. This could help us develop approximation algorithms based on the relaxation or even give some combinatorial algorithms based on the dual of the linear program.  
+Otherwise, we plan to use our experiments to show what approaches fail for this problem. We hope that perhaps ruling out certain LP relaxation approaches, or even relaxation as a technique for this problem altogether, may prove useful for future research.
+%
+%
+%for every $i$ and $j$ such that $a_i$ and $a_j$ give a valid rectangle. Then an additional constraint should say that
+%
+%
+%\[ b_{ij} + b_{kl} - \sum_{\text{points in edge of rectangle }b_{ij}, b_{kl}} \leq 1 \] 
+%
+%\[ b_{ij} \in \{ 0, 1 \} \]
+%
+%The first constraint says that each rectangle with the given points is satisfied, and the second says that rectangles created by additional points are satisfied. There are some ways to make some of the constraints simpler, but small attempts have shown that simplifying one constraint makes other constraints more complicated, so the typical methods that we learned for developing rounding schemes in relaxations do not seem to yield good approximation algorithms. We want to first take a step back and analyze the space created by the constraints and try some experiments to see the integrality gap between the optimal integer linear programming solution and the relaxed linear program. 
+%
+%The experiments might rule out the approach completely, or they might give us indication that some work should still be done. If the experiments show some promise, we want to explore the polytope created by the constraints of the linear program. We would like to see if we can represent the polytope in a lower dimensional space, if we could characterize the vertices, and also explore its dual. The dual might also yield some insight into the arboral satisfaction properties that were hidden in the primal form. This could help us develop approximation algorithms based on the relaxation or even give some combinatorial algorithms based on the dual of the linear program.  
 
 \end{document}
