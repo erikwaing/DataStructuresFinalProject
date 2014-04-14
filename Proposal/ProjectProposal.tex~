@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}    % needed for including graphics e.g. EPS, PS
+\topmargin -1.5cm        % read Lamport p.163
+\oddsidemargin -0.04cm   % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm 
+%\pagestyle{empty}       % Uncomment if don't want page numbers
+\parskip 7.2pt           % sets spacing between paragraphs
+%\renewcommand{\baselinestretch}{1.5} % Uncomment for 1.5 spacing between lines
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\parindent 0pt		 % sets leading space for paragraphs
+\author{Erik Waingarten \and Fermi Ma}
+\title{6.851 Final Project Proposal}
+
+
+\begin{document}         
+\maketitle
+
+For our final project, we want to investigate a linear programming approach to solving the offline dynamic optimality. This corresponds to the ``Points on the Plane'' open problem. There is a fairly simple integer linear program that represents the problem of finding the minimum number of additional points that would make a two-dimensional set of points arborally satisfied. The idea for a possible  $O(1)$-approximation algorithm is as follows:
+
+Suppose we are given a set of points $a_i = (x_i, y_i)$ in the $xy$ plane. Then we can think of the grid in the plane with horizontal lines and vertical lines going through the points $a_i$. 
+
+Let each point of intersection be a variable $b_{ij} = (x_i, y_j)$. Then we want to:
+
+\[ \min \sum_{i,j} b_{ij} \]
+
+such that 
+\[  \sum_{\text{points in edge of rectangle }a_i, a_j} b_{kl} \geq 1 \]
+for every $i$ and $j$ such that $a_i$ and $a_j$ for a valid rectangle. Then an additional constraint should say that
+
+\[ b_{ij} + b_{kl} - \sum_{\text{points in edge of rectangle }b_{ij}, b_{kl}} \leq 1 \] 
+
+\[ b_{ij} \in \{ 0, 1 \} \]
+
+The first constraint says that each rectangle with the given points is satisfied, and the second says that rectangles created by additional points are satisfied. There are some ways to make some of the constraints simpler, but small attempts have shown that simplifying one constraint makes other constraints more complicated, so the typical methods that we learned for developing rounding schemes in relaxations do not seem to yield good approximation algorithms. We want to first take a step back and analyze the space created by the constraints and try some experiments to see the integrality gap between the optimal integer linear programming solution and the relaxed linear program. 
+
+The experiments might rule out the approach completely, or they might give us indication that some work should still be done. If the experiments show some promise, we want to explore the polytope created by the constraints of the linear program. We would like to see if we can represent the polytope in a lower dimensional space, if we could characterize the vertices, and also explore its dual. The dual might also yield some insight into the arboral satisfaction properties that were hidden in the primal form. This could help us develop an approximation algorithms or even give some combinatorial algorithms based on the dual of the linear program.  
+
+\end{document}
