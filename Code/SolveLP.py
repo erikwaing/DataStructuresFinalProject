@@ -7,9 +7,9 @@ def solve(points, integer=False):
 	constraints = lp[1]
 	problem, variables = inputProblemIntoPulp(maximizationOptimization, constraints, integer)
 	problem.solve()
-	#for i in range(len(maximizationOptimization)):
-	#	print "Point (", i / len(points), ",", i % len(points), "): ", variables[i].varValue
-	#print "Objective: ", value(problem.objective
+	for i in range(len(maximizationOptimization)):
+		print "Point (", i / len(points), ",", i % len(points), "): ", variables[i].varValue
+	print "Objective: ", value(problem.objective)
 	return problem
 
 

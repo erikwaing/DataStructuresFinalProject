@@ -58,7 +58,7 @@ such that
 \begin{array}{c} \\ \leq \\ \\ \\ \leq \\ \\ \\ = \end{array} 
 \left[\begin{array}{c} 1 \\\\ 1 \\\\ \vdots \\\\ 1 \end{array} \right] \]
 
-Where $P$ and $N$ are $\dbinom{n}{2}^2 \times n$ matrices, since there are that many positive and negative rectangles. And $I_n$ is the identity matrix. Furthermore, we require that all variables are positive. 
+Where $P$ and $N$ are $\dbinom{n}{2}^2 \times n^2$ matrices, since there are that many positive and negative rectangles. And $I_n$ is the identity matrix. Furthermore, we require that all variables are positive. 
 
 So we can take the dual:
 \[ \max y^T \left[ \begin{array}{c} 1 \\ 1 \\ \vdots \\ 1 \end{array} \right] \]
@@ -69,4 +69,11 @@ such that
 \leq  \left[ \begin{array}{c} 1 \\ 1 \\ \vdots \\ 1 \end{array} \right] \]
 Where the first $n$ variables in $y$ can take on any value, and the rest must all be negative. 
 
+This will corresponds to the following:
+
+We will have a variable for each positive rectangle and each negative rectangle, denoted $b_{ij, lk}$ and a variable for each point that was set $a_{xy}$. Then for each point $xy$, if $xy$ is set, then we have the following constraint:
+\[ a_{xy} + \sum_{\text{ rectangles where $xy$ on corner }} b_{ij, lk} - \sum_{\text{ rectangles where $xy$ on side }} b_{ij,lk} \leq 1 \]
+If $xy$ is not set, then the $a_{xy}$ term is not present. We want to maximize
+\[ \sum a_{xy} + \sum b_{ij,lk} \]
+where $b_{ij,lk} \leq 0$. And the $a$'s are unconstrained. In some sense, we would like to set the values of the rectangles that have points two points on their corners as negative, since then we could raise $a_{xy}$ by the same amount in both corners and thus increase the objective.
 \end{document}

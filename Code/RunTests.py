@@ -4,6 +4,7 @@ import random
 def getIntegralityGap(n):
 	points = generatePointsRandomly(n)
 	integerSolution = solve(points, integer=True)
+	print "*********"
 	lpSolution = solve(points, integer=False)
 	return value(integerSolution.objective) / value(lpSolution.objective)
 
@@ -21,4 +22,4 @@ def runTestAndStoreIn(filename, numberOfTestsPerN, startN, endN):
 				answer = getIntegralityGap(i)
 				outputfile.write(str(i) + ", " + str(answer) + "\n")
 
-runTestAndStoreIn("tests.txt", 4, 1, 100)
+runTestAndStoreIn("a", 1, 10, 10)
