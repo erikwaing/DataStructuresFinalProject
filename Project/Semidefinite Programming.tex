@@ -1,0 +1,35 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}    % needed for including graphics e.g. EPS, PS
+\topmargin -1.5cm        % read Lamport p.163
+\oddsidemargin -0.04cm   % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm 
+%\pagestyle{empty}       % Uncomment if don't want page numbers
+\parskip 7.2pt           % sets spacing between paragraphs
+%\renewcommand{\baselinestretch}{1.5} % Uncomment for 1.5 spacing between lines
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\parindent 0pt		 % sets leading space for paragraphs
+\author{Erik Waingarten \and Fermi Ma}
+\title{Semidefinite Programming}
+
+
+\begin{document}         
+\maketitle
+
+We can simplify the LP by stating it as a quadratically contrained quadratic program.
+
+\[ \min \sum a_{ij} \]
+such that for each rectangle,
+\[ \sum_{\text{sides of the rectangle}} a_{ij} - a_{x_1y_1}a_{x_2y_2} \geq 0 \]
+if $a_{xy}$ is set, then
+\[ a_{xy} = 1\]
+and all the variables are either 0 or 1. 
+
+In order to solve this using Semidefinite programming, we would need to show that the set covered by the constraints is convex and that the objective is a convex function.
+
+Otherwise, the other method is to relax using reformulation-linearization technique. ???
+
+\end{document}
