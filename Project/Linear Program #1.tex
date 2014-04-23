@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}    % needed for including graphics e.g. EPS, PS
+\topmargin -1.5cm        % read Lamport p.163
+\oddsidemargin -0.04cm   % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm 
+%\pagestyle{empty}       % Uncomment if don't want page numbers
+\parskip 7.2pt           % sets spacing between paragraphs
+%\renewcommand{\baselinestretch}{1.5} % Uncomment for 1.5 spacing between lines
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\parindent 0pt		 % sets leading space for paragraphs
+\author{Erik Waingarten \and Fermi Ma}
+\title{Linear Program \#1}
+
+ 
+\begin{document}         
+\maketitle
+
+Suppose we are given a set of $n$ points $a_i = (x_i, y_i)$ in the $xy$ plane. Then we can think of the grid in the plane formed by all horizontal and vertical lines going through the points $a_i$. Note that since there are at most $n$ different $x$ values and $n$ different $y$ values, there are $n^2$ intersection points to consider (it is not hard to see that we only need these intersection points). We construct indicator variables $b_{jk}$, where $b_{jk} = 1$ if the grid point in the $j$th row and $k$th column is present, and 0 otherwise. Thus, the problem can be restated as an integer linear program (ILP) where the objective is:
+
+\[ \min \sum b_{jk} \]
+such that:
+\begin{align}
+ b_{x_iy_i} = 1 \hspace{.3in} \forall a_i = (x_i, y_i)
+\end{align}
+
+\begin{align}
+b_{ij} + b_{nm} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} (b_{il} + b_{nl}) + b_{im} + b_{nj} \right) &\leq& 1 & \hspace{.3in} \forall i<n, j<m \\
+b_{im} + b_{nj} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} (b_{il} + b_{nl}) + b_{ij} + b_{nm} \right) &\leq& 1 & \hspace{.3in} \forall i<n, j<m
+\end{align}
+Where constraint (3) makes sure that all the points are counted, constraint (4) makes sure that all ``positive rectangles are accounted", and (5) makes sure all ``negative" rectangles are accounted. 
+
+Solving the Integer Linear Program will solve offline dynamic optimality; however we show that the linear programming relaxation will probably not yield an $O(1)$-approximation.
+
+So the thing is that there are known instances of the problem that require $O(n\log n)$ additional points. On one of these instances, if you set all the neighboring points of set points to $0.5$. This is a feasible solution in the LP whose optimum is $O(n)$. Therefore, the integrality gap is $O(\log n)$. 
+
+This means that typical rounding schemes won't work. 
+
+\end{document}

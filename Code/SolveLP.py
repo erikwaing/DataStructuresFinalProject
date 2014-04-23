@@ -26,3 +26,9 @@ def inputProblemIntoPulp(optimization, constraints, integer=False):
 	for i, left in enumerate(constraints[0]):
 		problem += lpSum(variables[i]*left[i] for i in variableIndexes) <= constraints[1][i]
 	return problem, variables
+
+#points = [(0, 0), (1, 4), (2, 2), (3, 6), (4, 1), (5, 5), (6, 3), (7, 7)]
+#print 'Integer: '
+#solve(points, integer=True)
+#print 'General: '
+#solve(points)

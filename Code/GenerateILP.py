@@ -67,9 +67,9 @@ def generateSecondConstraints(points):
 							constraintNeg[l*n + two[1]] = -1
 						for l in range(one[1]+1, two[1]):
 							constraintPos[one[0]*n + l] = -1
-							constraintPos[two[1]*n + l] = -1
+							constraintPos[two[0]*n + l] = -1
 							constraintNeg[one[0]*n + l] = -1
-							constraintNeg[two[1]*n + l] = -1
+							constraintNeg[two[0]*n + l] = -1
 						constraintPos[i*n + y] = -1
 						constraintPos[x*n + j] = -1
 						constraintPos[i*n + j] = 1
