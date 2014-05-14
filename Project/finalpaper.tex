@@ -43,13 +43,34 @@ We can assign an indicator variable to each grid point, where the variable is se
 
 We set up the indicator variables as explained in the introduction, labeling them as $b_{jk}$, where $j$ and $k$ are labels on the grid intersection points (labelled so that $b_{00}$ is the lower left grid point, $b_{01}$ is the point directly above, and $b_{10}$ is the point directly to the right).
 
+Consider the following set of constraints:
+
+\begin{align}
+b_{ij} + b_{nm} - \left(\left(\sum_{i \leq k \leq j}\sum_{n\leq l \leq m} b_{kl}\right) - b_{ij} - b_{nm}\right) &\leq 1  \hspace{.3in} \forall i<n, j<m \\
+b_{im} + b_{nj} - \left(\left(\sum_{i \leq k \leq m}\sum_{n\leq l \leq j} b_{kl}\right) - b_{im} - b_{nj}\right)  &\leq 1  \hspace{.3in} \forall i<n, j<m
+\end{align}
+
+We claim that these constraints exactly capture arboral satisfaction. Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles. 
+
+If we look at constraints of type (1), the vertices corresponding to variables $b_{ij}$ and $b_{nm}$ are present, those variables are set to 1 and sum to 2, and this forces the following term in parenthesis to be at least 1 in order for the constraint to be satisfied. The term in parenthesis corresponds to all points in the rectangle spanned by these vertices, and so forcing one of those variables to be 1 is equivalent to ensuring that the rectangle is satisfied. The constraints of type (2) work the same way.
+
+If the two corner vertices are not present, the positive terms in the constraint are at most 1, and so the constraint is satisfied no matter what the term in parenthesis is.
+
+However, the primary issue with writing constraints like this is that they are possibly quadratic in size. Two vertices may span a rectangle of $O(n^2)$ points, and it seems difficult to extract an $O(1)$ approximation scheme from such constraints.
+
+\section{A Second Attempt: Reducing Constraint Size}
+
 To set up linearly sized constraints, we need a simple lemma.
 
 \begin{lemma}
-Any arborally satisfied point set can be modified so that all the rectangles are satisfied by grid points that lie on their edges.
+Any arborally satisfied point set can be modified with $O(1)$ overhead so that all the rectangles are satisfied by grid points that lie on their edges.
 \end{lemma}
 
-\begin{proof}
+\begin{proof} We consider the process of adding points to satisfy unsatisfied rectangles. Consider any unsatisfied negative rectangle, with vertices $v_1 = (0,0)$ and $v_2 = (a,b)$. Suppose it is optimal to satisfy this rectangle by filling in a non-edge point, at vertex $v_3 = (c,d)$ where $c < a$ and $d< b$.
+
+We claim that instead of placing vertex $v_3$, we could have placed the two vertices $(c,b)$ and $(a,d)$. These two vertices clearly satisfy the original rectangle defined by $v_1$ and $v_2$, so the only worry now is that $v_3$ was placed ``optimally" to satisfy other rectangles that intersect this rectangle (and are defined by vertices that lie entirely outside this rectangle). But we note that these two new vertices $(c,b)$ and $(a,d)$ will satisfy any such rectangle that $v_3 = (c,d)$ might have satisfied. Thus, we can simply replace this vertex with these two vertices, and lose at most a factor of 2.
+
+Note that a symmetric argument works for any given positive rectangle
 
 \end{proof}
 
@@ -60,9 +81,7 @@ b_{ij} + b_{nm} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} 
 b_{im} + b_{nj} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} (b_{il} + b_{nl}) + b_{ij} + b_{nm} \right) &\leq& 1 & \hspace{.3in} \forall i<n, j<m
 \end{align}
 
-Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles.
-
-EXPLAIN why this captures arboral satisfaction (first explain why you only need to edge satisfy them)
+Constraints of type (3) correspond to all possible ``positive" rectangles, and constraints of type (4) correspond to all possible ``negative" rectangles. This captures arboral satisfaction for the same reason that the constraints of types (1) and (2) do. The only difference is that these constraints only look at vertices on the edges of rectangles.
 
 \section{Possible Approaches}
 
