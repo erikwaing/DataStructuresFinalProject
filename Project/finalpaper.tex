@@ -171,6 +171,29 @@ However, without computing $ILP$, we won't be able to show that $R$ and $ILP$ ar
 
 \section{Extending the Method}
 
+Our hope is to show that this technique of producing an unbounded integrality gap extends to all linear programming interpretations of arboral satisfaction. However, it seems very difficult to make such claims, and so we have only focused on ``natural" linear programming interpretations.
+
+We make three assumptions about ``natural" linear programs for this problem:
+
+1) Grid points should correspond to variables and vice versa, and variables should be 0 or 1 depending on whether or not the grid point is present.
+
+2) There should be one constraint for each possible grid rectangle. It does not seem like it makes sense for a given rectangle's arboral satisfaction to rely on two or more constraints.
+
+3) The structure of the constraint does not depend on the rectangle that corresponds to it. Essentially, this is just assuming that we can write down all constraints in a general form, as we do with equations (1), (2), (3), and (4).
+
+Whether or not these assumptions are sufficiently general or even reasonable is unclear. However, the two linear programs we have shown clearly meet these assumptions, and we believe there is likely an unbounded integrality gap for all programs that do meet these assumptions.
+
+Consider the constraint corresponding to some given positive rectangle defined by two corner vertices $b_{ij}$ and $b_{kl}$ where $i<k$ and $j< l$. We know what points (in constraint space, not the plane) should satisfy the constraints and what do not, so we can use this information to reveal the structure of the constraint. In particular, if at least one of $b_{ij}$ or $b_{kl}$ is 0, the point (in constraint space) should satisfy the constraint no matter what. However, if both $b_{ij}$ and $b_{kl}$ are 1, then we don't want this to be a satisfying arrangement unless some other $b$ within the rectangle is set to 1. Since we can satisfy the rectangle by including any $b$ in the rectangle, we note that the coefficients of these $b$'s must be the opposite of the coefficients on $b_{ij}$ and $b_{kl}$. WLOG, assume the coefficients on $b_{ij}$ and $b_{mn}$ are positive (otherwise we can just multiply both sides by -1), and this tells us the LHS of the constraint is of the form
+\[ w_{ij}b_{ij} + w_{kl}b_{kl} - \sum_{b_{mn} \in \text{rectangle}} w_{mn}b_{mn} \]
+
+If no points in the plane are present, the constraints should all be satisfied. We consider the following idea:
+
+For each point $b_{ij}$ in the given point set $P$, increase $b_{i+1,j}$ by $w_{i,j}/w_{i+1,j}$, and increase $b_{i-1,j}$ by $w_{i,j}/w_{i-1,j}$. We can easily check that this leads every LHS of every constraint corresponding to a rectangle formed by two points in $P$ to equal 0. If we could guarantee this for all rectangles, then we would be finished.
+
 \section{Conclusions}
+
+Our results have shown that the natural linear programming interpretations of the points in the plane do not seem to be particularly helpful in solving the problem. Standard ways of tackling linear programs such as looking at their duals or trying to transform them into max flow problems are not useful for the linear programs we were able to write down.
+
+We were able to show an unbounded integrality gap, and we hope that we can show an unbounded gap for all linear programs.
 
 \end{document}
