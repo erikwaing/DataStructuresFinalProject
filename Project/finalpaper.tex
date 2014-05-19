@@ -13,13 +13,16 @@
 \usepackage{amsthm}
 \usepackage{verbatim}
 \usepackage{subfigure}
+\usepackage{cite}
 \parindent 0pt		 % sets leading space for paragraphs
-\author{by Erik Waingarten and Fermi Ma}
+\author{Fermi Ma \and Erik Waingarten}
 \title{Data Structures Final Project:\\
 A Linear Programming Approach to Dynamic Optimality}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{observation}{Observation}
+
 \begin{document}         
 \maketitle
 
@@ -76,19 +79,7 @@ The primary issue with writing constraints like this is that they are possibly q
 
 \section{A Second Attempt: Reducing Constraint Size}
 
-To set up linearly sized constraints, we need a simple lemma.
-
-\begin{lemma}
-Any arborally satisfied point set can be modified with $O(1)$ multiplicative overhead so that all the rectangles are satisfied by grid points that lie on their edges.
-\end{lemma}
-
-\begin{proof} We consider the process of adding points to satisfy unsatisfied rectangles. Consider any unsatisfied negative rectangle, with vertices $v_1 = (0,0)$ and $v_2 = (a,b)$. Suppose it is optimal to satisfy this rectangle by filling in a point not in the rectangle's edge, at vertex $v_3 = (c,d)$ where $c < a$ and $d< b$.
-
-We claim that instead of placing vertex $v_3$, we could have placed the two vertices $(c,b)$ and $(a,d)$. These two vertices clearly satisfy the original rectangle defined by $v_1$ and $v_2$, so the only worry now is that $v_3$ was placed ``optimally" to satisfy other rectangles that intersect this rectangle (and are defined by vertices that lie entirely outside this rectangle). But we note that these two new vertices $(c,b)$ and $(a,d)$ will satisfy any such rectangle that $v_3 = (c,d)$ might have satisfied. Thus, we can simply replace this vertex with these two vertices, and lose at most a factor of 2.
-
-Note that a symmetric argument works for any given positive rectangle
-
-\end{proof}
+Any arborally satisfied point set has all the rectangles are satisfied by grid points that lie on their edges ~\cite{geometryBST}. This allows us to reduce the size of the constraints from $O(n^2)$ to $O(n)$.
 
 We claim that the following set of constraints captures arboral satisfaction: 
 
@@ -173,6 +164,36 @@ However, without computing $ILP$, we won't be able to show that $R$ and $ILP$ ar
 
 Our hope is to show that this technique of producing an unbounded integrality gap extends to all linear programming interpretations of arboral satisfaction. However, it seems very difficult to make such claims, and so we have only focused on ``natural" linear programming interpretations.
 
+We make the one assumption that all variables corresponds to points, and that the variable is set to $1$ when the point is included in the set $Q$ and $0$ otherwise. Without loss generality, we can assume that all contraints are either $\leq$ contraints, and there are an additional $n$ contraints to set the variables which corresponds to points in $P$ to $1$. Also, without loss of generality, we can rescale the contraints so that they are all $\leq 1$. 
+
+\begin{observation}
+For each two points $x$ and $y$ which form a rectangle, there exists a contraint $C$, such that
+\[ C: a_1x + a_2y + \dots \leq 1 \]
+where $a_1 \leq 1$, $a_2 \leq 1$ and $a_1 + a_2 \geq 1$. 
+\end{observation}
+
+\begin{proof}
+This just follows from the fact that if there is only one point, the set is arborally satisfied. Which means that all positive coefficients are less than $1$. Also since setting points $x$ and $y$ alone is not arborally satisfied, there exists a contraint which is violated.
+\end{proof}
+
+\begin{observation}
+For each two points $x$ and $y$ which form a rectangle, let $z$ be a different point on a corner of the rectangle spanned by $x$ and $y$, then
+\[ C: a_1x + a_2y - a_zz + \dots \leq 1 \]
+where $a_1 + a_2 - a_z \leq 1$.
+\end{observation}
+
+\begin{proof}
+This follows from the fact that constraint $C$ was not satisfied without $z$ but it is satisfied with $z = 1$. 
+\end{proof}
+
+In fact, we can generalize the statement to all points in the edges.
+\begin{observation}
+For each two points $x$ and $y$ which form a rectangle, let $z_1$ and $z_2$ be points on the edge of the rectangle across from each other, then
+\[ C : a_1x + a_2y + a_{z_1}z_1 + a_{z_2} + \dots \leq 1\]
+where $a_1 + a_2 + a_{z_1} + a_{z_2} \leq 1$. 
+\end{observation}
+
+\begin{comment}
 We make three assumptions about ``natural" linear programs for this problem:
 
 1) Grid points should correspond to variables and vice versa, and variables should be 0 or 1 depending on whether or not the grid point is present.
@@ -189,11 +210,15 @@ Consider the constraint corresponding to some given positive rectangle defined b
 If no points in the plane are present, the constraints should all be satisfied. We consider the following idea:
 
 For each point $b_{ij}$ in the given point set $P$, increase $b_{i+1,j}$ by $w_{i,j}/w_{i+1,j}$, and increase $b_{i-1,j}$ by $w_{i,j}/w_{i-1,j}$. We can easily check that this leads every LHS of every constraint corresponding to a rectangle formed by two points in $P$ to equal 0. If we could guarantee this for all rectangles, then we would be finished.
+\end{comment}
 
 \section{Conclusions}
 
 Our results have shown that the natural linear programming interpretations of the points in the plane do not seem to be particularly helpful in solving the problem. Standard ways of tackling linear programs such as looking at their duals or trying to transform them into max flow problems are not useful for the linear programs we were able to write down.
 
 We were able to show an unbounded integrality gap, and we hope that we can show an unbounded gap for all linear programs.
+
+\bibliography{references}
+\bibliographystyle{plain}
 
 \end{document}
