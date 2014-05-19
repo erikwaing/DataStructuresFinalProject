@@ -169,7 +169,7 @@ We make the one assumption that all variables corresponds to points, and that th
 \begin{observation}
 For each two points $x$ and $y$ which form a rectangle, there exists a contraint $C$, such that
 \[ C: a_1x + a_2y + \dots \leq 1 \]
-where $a_1 \leq 1$, $a_2 \leq 1$ and $a_1 + a_2 \geq 1$. 
+where $a_1 \leq 1$, $a_2 \leq 1$ and $a_1 + a_2 > 1$. 
 \end{observation}
 
 \begin{proof}
@@ -179,7 +179,7 @@ This just follows from the fact that if there is only one point, the set is arbo
 \begin{observation}
 For each two points $x$ and $y$ which form a rectangle, let $z$ be a different point on a corner of the rectangle spanned by $x$ and $y$, then
 \[ C: a_1x + a_2y - a_zz + \dots \leq 1 \]
-where $a_1 + a_2 - a_z \leq 1$.
+where $a_1 + a_2 - a_z \leq 1$ and so $a_z < 0$.
 \end{observation}
 
 \begin{proof}
