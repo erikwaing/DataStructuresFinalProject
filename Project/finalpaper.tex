@@ -54,28 +54,21 @@ We found that it was possible to write down an exact ILP with $O(n^2)$ constrain
 
 \section{Bounds on the Problem}
 
-Observe that $|Q| = \Omega(n)$ since $P \subset Q$. Furthermore, $|Q| = O(n^2)$ is trivially true since every grid intersection point can be included (see Figure~\ref{fig:instance}). However, there exists a stronger bound:
+Observe that $|Q| = \Omega(n)$ since $P \subset Q$. Furthermore, $|Q| = O(n^2)$ is trivially true since every grid intersection point can be included (see Figure~\ref{fig:instance}). However, there exists a stronger bound (communicated to us verablly by Erik Demaine):
 
-\begin{theorem} $|Q| = O(n\log(n))$ (communicated to us verablly by Erik Demaine)
+\begin{theorem} $|Q| = O(n\log(n))$
 \end{theorem}
 \begin{proof}
 Let $m$ be the median in the $x$ axis of $P$, this divides $P$ into two sets of size $O(\frac{n}{2})$. Now for each $(x,y) \in P$, let $(m, y) \in Q$. Then recursively solve both subsets of size $O(\frac{n}{2})$. Note that for every two points, they will be divided by the recursion at some point. This means that there is a point in rectangle. This gives the recursion $|Q| = T(n) = 2T(\frac{n}{2}) + O(n)$, therefore, $|Q| = O(n \log n)$. 
 \end{proof}
 
-The same bounds arise from knowing that each arborally satisfied set corresponds to an access sequence of a binary search tree algorithm. \cite{geometryBST}
-
-We show an integer linear program whose optimum gives an $O(1)$ approximation problem. 
-
-
-We can assign an indicator variable to each grid point, 
+The same bound arises from viewing each arborally satisfied set as an access sequence of a binary search tree algorithm. \cite{geometryBST}
 
 \section{A First Attempt}
 
 We set up the indicator variables as explained in the introduction, labeling them as $b_{jk}$, where $j$ and $k$ are labels on the grid intersection points (labelled so that $b_{00}$ is the lower left grid point, $b_{01}$ is the point directly above, and $b_{10}$ is the point directly to the right).
 
 Consider the following set of constraints:
-
-w1*corner + w1*other corner - w*2(in box) <= 1
 
 \begin{align}
 2b_{ij} + 2b_{nm} - \left(\sum_{i \leq k \leq n}\sum_{j\leq l \leq m} b_{kl}\right) &\leq 1  \hspace{.3in} \forall i<n, j<m \\
@@ -84,17 +77,19 @@ w1*corner + w1*other corner - w*2(in box) <= 1
 
 We claim that these constraints exactly capture arboral satisfaction. Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles.
 
-If we look at constraints of type (1), the vertices corresponding to variables $b_{in}$ and $b_{jm}$ are present, those variables are set to 1 and sum to 4, and this forces the following term in parenthesis to be at least 3 in order for the constraint to be satisfied, however, we know that $b_{in}$ and $b_{jm}$ are inside the parenthesized term, so we need to find one more additional point in the parenthesized term that is set to $1$. The term in parenthesis corresponds to all points in the rectangle spanned by these vertices, and so forcing one of those variables to be 1 is equivalent to ensuring that the rectangle is satisfied. The constraints of type (2) work the same way.
+To see the equivalence, first consider constraints of type (1). If points in the grid corresponding to $b_{ij}$ and $b_{nm}$ are present, the rectangle they span must be satisfied by some point corresponding to $b_{kl}$ such that   $i\leq k \leq n$ and $j \leq l \leq m$ (although it cannot equal to $b_{ij}$ or $b_{nm}$). The constraint ensures precisely this: if $b_{ij} = b_{nm} = 1$, at least one other $b_{kl}$ in the parenthesized term must be set to 1, or else the entire left hand side will be a quantity greater than 1. The constraints of type (2) work the same way.
 
+\begin{comment}
 An easy way to think of the constraints is that we are taking the sum of the points that create a rectangle minus every point inside that rectangle which is not the set points, and that this must be less than 1. This says that if both points of the corners are set to 1, then the sum will be 2, which means that there must be at least one point inside the rectangle set to 1. Thus the rectangle is satisfied. 
+\end{comment}
+If either of the corner vertices are not present, the rectangle corresponding to the constraint should be inactive, as there does not have to be a point satisfying it. Note that the constraint captures this behavior, since in this case the positive terms will be at most 1, satisfying the inequality no matter what the term in parenthesis is.
 
-If the two corner vertices are not present, the positive terms in the constraint are at most 1, and so the constraint is satisfied no matter what the term in parenthesis is.
+If we have such constraint for every possible rectangle, we will have an arborally satisfied set. Note that this integer linear program will solve for the exact optimal solution.
 
-If we have such constraint for every possible rectangle, we will have an arborally satisfied set. Note that this integer linear program will solve for exactly the optimal solution.
-
-The primary issue with writing constraints like this is that they are possibly quadratic in size, so they are harder to work with. We can simplify the constraints to be linear in size and only sacrifice a constant factor to the optimum. Since we are focused on solving dynamic optimality, giving up a constant factor is fine.
+The primary issue with writing constraints of this form is this is that they are possibly quadratic in size, which makes it unlikely for them to yield useful approximation techniques. It turns out that we can simplify the constraints to be linear in size, as we show in Section~\ref{A Second Attempt: Reducing Constraint Size}, and this seems more promising since the dynamic optimality problem is focused on constant factor approximations. 
 
 \section{A Second Attempt: Reducing Constraint Size}
+\label{A Second Attempt: Reducing Constraint Size}
 
 Any arborally satisfied point set has all the rectangles are satisfied by grid points that lie on their edges ~\cite{geometryBST}. This allows us to reduce the size of the constraints from $O(n^2)$ to $O(n)$.
 
