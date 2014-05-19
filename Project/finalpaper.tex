@@ -54,7 +54,13 @@ We found that it was possible to write down an exact ILP with $O(n^2)$ constrain
 
 \section{Bounds on the Problem}
 
-Observe that $|Q| = \Omega(n)$ since $P \subset Q$. Furthermore, $|Q| = O(n^2)$ is trivially true since every grid intersecting point (see Figure~\ref{fig:instance}). However, there is another bound which sets $|Q| = O(n\log n)$. The solution was communicated verbally to us by Erik Demaine. Let $m$ be the median in the $x$ axis of $P$, this divides $P$ into two sets of size $O(\frac{n}{2})$. Now for each $(x,y) \in P$, let $(m, y) \in Q$. Then recursively solve both subsets of size $O(\frac{n}{2})$. Note that for every two points, they will be divided by the recursion at some point. This means that there is a point in rectangle. This gives the recursion $|Q| = T(n) = 2T(\frac{n}{2}) + O(n)$, therefore, $|Q| = O(n \log n)$. 
+Observe that $|Q| = \Omega(n)$ since $P \subset Q$. Furthermore, $|Q| = O(n^2)$ is trivially true since every grid intersection point can be included (see Figure~\ref{fig:instance}). However, there exists a stronger bound:
+
+\begin{theorem} $|Q| = O(n\log(n))$ (communicated to us verablly by Erik Demaine)
+\end{theorem}
+\begin{proof}
+Let $m$ be the median in the $x$ axis of $P$, this divides $P$ into two sets of size $O(\frac{n}{2})$. Now for each $(x,y) \in P$, let $(m, y) \in Q$. Then recursively solve both subsets of size $O(\frac{n}{2})$. Note that for every two points, they will be divided by the recursion at some point. This means that there is a point in rectangle. This gives the recursion $|Q| = T(n) = 2T(\frac{n}{2}) + O(n)$, therefore, $|Q| = O(n \log n)$. 
+\end{proof}
 
 The same bounds arise from knowing that each arborally satisfied set corresponds to an access sequence of a binary search tree algorithm. \cite{geometryBST}
 
