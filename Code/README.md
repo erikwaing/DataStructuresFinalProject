@@ -1,10 +1,8 @@
 6.851 Advanced Data Structures Project
-
-====================
+======================================
 
 Fermi Ma and Erik Waingarten
-
----------------------
+----------------------------
 
 ## Dependencies
 
