@@ -74,9 +74,17 @@ Consider the following set of constraints:
 2b_{im} + 2b_{nj} - \left(\sum_{i \leq k \leq n}\sum_{j\leq l \leq m} b_{kl}\right)  &\leq 1  \hspace{.3in} \forall i<n, m<j
 \end{align}
 
-We claim that these constraints exactly capture arboral satisfaction. Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles.
+We claim that these constraints exactly capture arboral satisfaction. Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles (explained in Figure 2).
 
 To see the equivalence, first consider constraints of type (1). If points in the grid corresponding to $b_{ij}$ and $b_{nm}$ are present, the rectangle they span must be satisfied by some point corresponding to $b_{kl}$ such that   $i\leq k \leq n$ and $j \leq l \leq m$ (although it cannot equal to $b_{ij}$ or $b_{nm}$). The constraint ensures precisely this: if $b_{ij} = b_{nm} = 1$, at least one other $b_{kl}$ in the parenthesized term must be set to 1, or else the entire left hand side will be a quantity greater than 1. The constraints of type (2) work the same way.
+
+\begin{figure}
+\centering
+\subfigure[Positive rectangle]{\includegraphics[width=.2\linewidth]{negative.pdf}\label{fig:negative}}
+\subfigure[Negative rectangle]{\includegraphics[width=0.2\linewidth]{positive.pdf}\label{fig:positive}}
+\caption{Positive and negative rectangles: black corresponds to points that are included, and white corresponds to the points not included}
+\label{fig:rectangles}
+\end{figure}
 
 \begin{comment}
 An easy way to think of the constraints is that we are taking the sum of the points that create a rectangle minus every point inside that rectangle which is not the set points, and that this must be less than 1. This says that if both points of the corners are set to 1, then the sum will be 2, which means that there must be at least one point inside the rectangle set to 1. Thus the rectangle is satisfied. 
@@ -90,7 +98,7 @@ The primary issue with writing constraints of this form is this is that they are
 \section{A Second Attempt: Reducing Constraint Size}
 \label{A Second Attempt: Reducing Constraint Size}
 
-Any arborally satisfied point set has all the rectangles are satisfied by grid points that lie on their edges ~\cite{geometryBST}. This allows us to reduce the size of the constraints from $O(n^2)$ to $O(n)$.
+By definition, we know that arborally satisfied point sets have all rectangles satisfied by some point on the interior (including edges). It turns out that a short inductive argument shows that all rectangles are in fact satisfied by some point on their edges ~\cite{geometryBST}. This allows us to reduce the size of the constraints from $O(n^2)$ to $O(n)$.
 
 We claim that the following set of constraints captures arboral satisfaction: 
 
@@ -101,15 +109,8 @@ b_{im} + b_{nj} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} 
 
 Constraints of type (3) correspond to all possible ``positive" rectangles, and constraints of type (4) correspond to all possible ``negative" rectangles. This captures arboral satisfaction for the same reason that the constraints of types (1) and (2) do. The only difference is that these constraints only look at vertices on the edges of rectangles. Figure~\ref{fig:rectangles} gives the graphical interpretation of the contraints, where he white circles are added  and the black circles are subtracted, the black lines correspond to all the points in between being subtracted.
 
-\begin{figure}
-\centering
-\subfigure[Positive rectangle]{\includegraphics[width=0.2\linewidth]{positive.pdf}\label{fig:positive}}
-\subfigure[Negative rectangle]{\includegraphics[width=.2\linewidth]{negative.pdf}\label{fig:negative}}
-\caption{Positive and negative rectangle contraints. White corresponds to points being added, and black corresponds to the points being subtracted}
-\label{fig:rectangles}
-\end{figure}
-
 With this, we have simplified our constraints significantly and only lost an $O(1)$ factor to the optimum.
+
 
 \section{Possible Approaches}
 
