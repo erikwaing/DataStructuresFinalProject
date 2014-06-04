@@ -15,8 +15,9 @@
 \usepackage{subfigure}
 \usepackage{cite}
 \parindent 0pt		 % sets leading space for paragraphs
-\author{Fermi Ma \and Erik Waingarten}
-\title{A Linear Programming Approach to Dynamic Optimality}
+\author{Fermi Ma and Erik Waingarten}
+\title{Data Structures Final Project:\\
+A Linear Programming Approach to Dynamic Optimality}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -47,7 +48,7 @@ It is natural to restrict attention to the grid of intersection points ``induced
 \label{fig:instance}
 \end{figure}
 
-We can directly correspond an integer linear program (ILP) to the problem by assigning an indicator variable to each grid point, where the variable is set to 1 if the point is included and is 0 otherwise. This gives the obvious objective of minimizing the sum of all the variables, and leaves the task of writing down the arboral satisfaction property in terms linear constraints. While other linear programming approaches may exist, this setup feels the most natural and so we restrict our attention to it.
+We can directly correspond an integer linear program (ILP) to the problem by assigning an indicator variable to each grid point, where the variable is set to 1 if the point is included and is 0 otherwise. This immediately gives us $n$ constraints, one for each variable corresponding to a point in $P$ (setting them all equal to 1). This gives the obvious objective of minimizing the sum of all the variables, and leaves the task of writing down the arboral satisfaction property in terms of other linear constraints. While other linear programming approaches may exist, this setup feels the most natural and so we restrict our attention to it.
 
 We found that it was possible to write down an exact ILP with $O(n^2)$ constraints of size $O(n^2)$, and another ILP with $O(n^2)$ constraints of size $O(n)$ with the same optimal solutions to the original problem. We attempted to use the second ILP formulation to generate an approximation algorithm for the problem by considering the relaxed linear program, but methods such as viewing the problem as a max flow problem and taking the dual proved unsuccessful. Our experiments indicated that the ILP had an integrality gap strictly greater than 1, and we were later able to demonstrate an unbounded integrality gap for the specific ILP we had written down. This indicates that common approximation algorithm for that specific ILP will not work, and we conjecture that an unbounded integrality gap exists for any ILP formulation of the problem. We were not able to prove the conjecture, but we provide some useful observations.
 
@@ -91,51 +92,49 @@ An easy way to think of the constraints is that we are taking the sum of the poi
 \end{comment}
 If either of the corner vertices are not present, the rectangle corresponding to the constraint should be inactive, as there does not have to be a point satisfying it. Note that the constraint captures this behavior, since in this case the positive terms will be at most 1, satisfying the inequality no matter what the term in parenthesis is.
 
-If we have such constraint for every possible rectangle, we will have an arborally satisfied set. Note that this integer linear program will solve for the exact optimal solution.
+If we have such a constraint for every possible rectangle, we will have an arborally satisfied set. Note that this integer linear program will solve for the exact optimal solution.
 
-The primary issue with writing constraints of this form is this is that they are possibly quadratic in size, which makes it unlikely for them to yield useful approximation techniques. It turns out that we can simplify the constraints to be linear in size, as we show in Section~\ref{A Second Attempt: Reducing Constraint Size}, and this seems more promising since the dynamic optimality problem is focused on constant factor approximations. 
+The primary issue with writing constraints of this form is this is that they are possibly quadratic in size, which makes it unlikely for them to yield useful approximation techniques. It turns out that we can simplify the constraints to be linear in size, as we show in Section 4, and this seems more promising since the dynamic optimality problem is focused on constant factor approximations. 
 
 \section{A Second Attempt: Reducing Constraint Size}
 \label{A Second Attempt: Reducing Constraint Size}
 
 By definition, we know that arborally satisfied point sets have all rectangles satisfied by some point on the interior (including edges). It turns out that a short inductive argument shows that all rectangles are in fact satisfied by some point on their edges ~\cite{geometryBST}. This allows us to reduce the size of the constraints from $O(n^2)$ to $O(n)$.
 
-We claim that the following set of constraints captures arboral satisfaction: 
+We thus claim that the following set of constraints captures arboral satisfaction: 
 
 \begin{align}
 b_{ij} + b_{nm} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} (b_{il} + b_{nl}) + b_{im} + b_{nj} \right) &\leq& 1 & \hspace{.3in} \forall i<n, j<m \\
 b_{im} + b_{nj} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} (b_{il} + b_{nl}) + b_{ij} + b_{nm} \right) &\leq& 1 & \hspace{.3in} \forall i<n, j<m
 \end{align}
 
-Constraints of type (3) correspond to all possible ``positive" rectangles, and constraints of type (4) correspond to all possible ``negative" rectangles. This captures arboral satisfaction for the same reason that the constraints of types (1) and (2) do. The only difference is that these constraints only look at vertices on the edges of rectangles. Figure~\ref{fig:rectangles} gives the graphical interpretation of the contraints, where he white circles are added  and the black circles are subtracted, the black lines correspond to all the points in between being subtracted.
-
-With this, we have simplified our constraints significantly and only lost an $O(1)$ factor to the optimum.
-
+Constraints of type (3) correspond to all possible ``positive" rectangles, and constraints of type (4) correspond to all possible ``negative" rectangles. This captures arboral satisfaction for the same reason that the constraints of types (1) and (2) do. The only difference is that we no longer include points that are strictly inside rectangles.
 
 \section{Possible Approaches}
 
 \subsection{Experiments}
 
-We ran experiments to see how the integer linear program compared to the linear program. In particular, we wanted to see whether they were the same, or what the integrality gap was. We wrote a program in python that would generate instances of the points in the plane problem and tried to solve it with the second linear program. We used a python library PuLP which in turn used GLPK (GNU Linear Programming Kit). We were able to run experiments and showed that in fact there are cases for which the second linear program had an integrality gap strictly greater than 1. In most cases, the integrality gap was between 1 and 2, and never surpassed 1.6.
+We ran experiments to see how the integer linear program compared to the linear program. In particular, we wanted to see whether they were the same, or if there was an the integrality gap greater than 1. We wrote a program in Python that would generate instances of the points in the plane problem and tried to solve it with the second linear program. We used a Python library PuLP which in turn used GLPK (GNU Linear Programming Kit). We were able to run experiments that showed that there are cases for which the second linear program has an integrality gap strictly greater than 1. In all cases, the integrality gap was between 1 and 1.6.
 
 \subsection{Max Flow}
 
-We tried to solve the integer linear program for an optimal solution. This would have solved the points in the plane problem. We wanted to write the integer linear program as an equivalent flow problem. We were unsuccessful at coming up with such a formulation, and we believe that no simple max flow formulations of this exact LP exist. A natural way of rewriting this problem as a flow problem would probably result in a flow problem with integral capacities and costs, given that all coefficients in the constraints in the linear program are integers. However, the Integral Flow Theorem would then guarantee that the optimal solution to this LP would be integral. This cannot be the case, since experimental evidence shows there is an integrality gap strictly greater than 1.
+We tried to solve reformulate the ILP as an equivalent flow problem, hoping that this would give a direct solution to the points in the plane problem. We were unsuccessful at coming up with such a formulation, and we believe that no simple max flow formulations of this exact LP exist. A natural way of rewriting this problem as a flow problem would probably result in a flow problem with integral capacities and costs, given that all coefficients in the constraints in the linear program are integers. However, the Integral Flow Theorem would then guarantee that the optimal solution to this LP would be integral. This cannot be the case, since our experimental evidence shows there is an integrality gap strictly greater than 1.
 
 \subsection{The Dual}
 
-The next thing we wanted to do was take the dual to see if we could derive some combinatorial interpretation that could simplify the problem or even find other potential algorithms for the problem.
-Representing the linear program as a matrix, the primal linear program looks like:
+The next thing we tried was taking the dual to see if we could derive some alternative combinatorial interpretation for the problem.
+
+Representing the linear program as a matrix, the primal linear program has the objective:
 \[ \min \hspace{.1in} [ \begin{array}{cccc} 1 & 1 & \dots & 1 \end{array} ] \left[\begin{array}{c} b_{11} \\ b_{12} \\ \vdots \\ b_{nn} \end{array} \right]\]
-such that
-\[ \left[ \begin{array}{c} \vdots \\ \text{ $P$ = positive rectangles } \\ \vdots \\ \text{ $N$ = negative rectangles } \\ \vdots \\ \text{ $I_n'$ = equality } \end{array} \right] 
+with constraints:
+\[ \left[ \begin{array}{c} \vdots \\ \text{ $P$ = positive rectangles } \\ \vdots \\ \text{ $N$ = negative rectangles } \\ \vdots \\ \text{ $I_n'$ = equality constraints } \end{array} \right] 
 \left[\begin{array}{c} b_{11} \\ b_{12} \\ \vdots \\ b_{nn} \end{array} \right] 
 \begin{array}{c} \\ \leq \\ \\ \\ \leq \\ \\ \\ = \end{array} 
 \left[\begin{array}{c} 1 \\\\ 1 \\\\ \vdots \\\\ 1 \end{array} \right] \]
 
-Where $P$ and $N$ are $\dbinom{n}{2}^2 \times n^2$ matrices, since there are that many positive and negative rectangles. $I_n'$ is the some permutation of identity matrix with extra zero columns. Furthermore, we require that all variables are positive. 
+where $P$ and $N$ are $\dbinom{n}{2}^2 \times n^2$ matrices, where these values count exactly the number of positive and negative rectangles. $I_n'$ is the some permutation of identity matrix with extra zero columns, and corresponds to the constraints that set variables in the given set of points equal to 1. Furthermore, we require that all variables be positive. 
 
-We can compute the dual:
+We compute the dual to be:
 \[ \max y^T \left[ \begin{array}{c} 1 \\ 1 \\ \vdots \\ 1 \end{array} \right] \]
 such that
 \[ \left[ \begin{array}{ccc} \vdots & \vdots & \vdots \\
@@ -144,66 +143,79 @@ such that
 \leq  \left[ \begin{array}{c} 1 \\ 1 \\ \vdots \\ 1 \end{array} \right] \]
 Where the first $n$ variables in $y$ can take on any value, and the rest must all be negative. 
 
-This will corresponds to the following:
+This dual gives a somewhat fuzzy combinatorial interpretation:
 
-We will have a variable for each positive rectangle and each negative rectangle, denoted $b_{ij, lk}$ and a variable for each point that was set $a_{xy}$. Then for each point $xy$, if $xy$ is set, then we have the following constraint:
-\[ a_{xy} + \sum_{\begin{array}{c}\text{rectangles where}\\\text{$xy$ on corner}\end{array}} b_{ij, lk} - \sum_{\begin{array}{c}\text{rectangles where}\\\text{$xy$ on side}\end{array}} b_{ij,lk} \leq 1 \]
-If $xy$ is not set, then the $a_{xy}$ term is not present. We want to maximize
-\[ \sum a_{xy} + \sum b_{ij,lk} \]
-where $b_{ij,lk} \leq 0$. The $a$'s are unconstrained. We would like to set the values of the rectangles that have points two points on their corners as negative, since then we could raise $a_{xy}$ by the same amount in both corners and thus increase the objective.
+We have a variable for each rectangle, denoted $r_{ij, lk}$ (corresponding to the rectangle spanned by $b_{ij}$ and $b_{lk}$). Then for each point grid point present corresponding to variable $b_{xy}$, we have the following constraint:
+\[ b_{xy} + \sum_{\begin{array}{c}\text{rectangles with}\\\text{$b_{xy}$ on the corner}\end{array}} r_{ij, lk} - \sum_{\begin{array}{c}\text{rectangles with}\\\text{$b_{xy}$ on side}\end{array}} r_{ij,lk} \leq 1 \]
+If the grid point is not present, we get the same constraint but without the $b_{xy}$ term. We want to maximize
+\[ \sum b_{xy} + \sum r_{ij,lk} \]
+where $r_{ij,lk} \leq 0$, and the $b_{xy}$'s are unconstrained. We were unable to find a less convoluted interpretation of the dual than this, so we abandoned the approach.
 
 \section{An Unbounded Integrality Gap}
 
-We show that the linear programming relaxation will probably not yield an $O(1)$-approximation.
+We were finally able to show that the linear programming relaxation of our ILP (given by constraints (3) and (4)) would not yield an $O(1)$-approximation.
 
-There are known instances of the problem that require $O(n\log n)$ additional points. On one of these instances, if you set all the neighboring points of set points to $0.5$. To see that this solution is feasible, note that every rectangle created from points of value 1 will be satisfied, since the rectangle must contain at least 2 points of value $0.5$. All the rectangles created by one point of value $1$ and one point of value $0.5$ will be satisfied by a point of value $0.5$ adjacent to the point $1$. Finally each rectangle with opposite corners $0.5$ will automatically be satisfied since the sum of the two is already less than or equal to 1. This feasible solution in has an optimum of size $O(n)$; therefore, the integrality gap is $O(\log n)$. 
+There are known instances of the problem that require $O(n\log n)$ additional points. In any of these instances, we can satisfy the ILP by setting all variables corresponding to neighboring points of points in $P$ to $0.5$ (Refer to Figure 3b for the setup: white circles are variables set to 1, red circles are variables set to 0.5, and empty spots are set to 0).
 
-Figure~\ref{fig:integralitygap} demonstrates the lower bound of the integrality gap. Figure~\ref{fig:optimum} shows the optimum of the integer linear program, where the white circles are the instance of the problem and the green circles are the variables that are set to 1. It is clear from the picture that all constraints are satisfied and that this is the minimum number of points needed. Figure~\ref{fig:lpsolution} gives a $O(n)$ feasible solution to the linear program where the white circles indicate the instance of the problem and the red circles are the points that are assigned to $0.5$. 
+To see that this solution is feasible, we just check cases. Note that every constraint corresponding to rectangles spanned by points in $P$ will be satisfied, since they contain at least 2 points of value $0.5$. All constraints corresponding to rectangles where one corner is set to $1$ and the opposite corner is set to $0.5$ will satisfied, as at least one other variable of value $0.5$ (adjacent to the corner set to 1) will be subtracted away. Finally each constraint corresponding to a rectangle with opposite corners set to $0.5$ will automatically be satisfied. This feasible solution simply adds 2 to the sum of all the variables for each point in $P$, and is therefore $O(n)$. This implies an integrality gap is $O(\log n)$. 
+
+Figure 3a compares the linear ``solution" of Figure 3b with the optimal solution for a specific instance of the problem. 
+
+\begin{comment}
+demonstrates the lower bound of the integrality gap. Figure~\ref{fig:optimum} shows the optimum of the integer linear program, where the white circles are the instance of the problem and the green circles are the variables that are set to 1. It is clear from the picture that all constraints are satisfied and that this is the minimum number of points needed. Figure~\ref{fig:lpsolution} gives a $O(n)$ feasible solution to the linear program where the white circles indicate the instance of the problem and the red circles are the points that are assigned to $0.5$. 
+\end{comment}
 
 \begin{figure}
 \centering
 \subfigure[Optimal solution to integer linear program]{\includegraphics[width=0.4\linewidth]{optimum.pdf}\label{fig:optimum}}
-\subfigure[Feasible solution to linear program]{\includegraphics[width=.4\linewidth]{lpsolution.pdf}\label{fig:lpsolution}}
-\caption{Integrality gap of linear program}
+\subfigure[Feasible solution to linear program.]{\includegraphics[width=.4\linewidth]{lpsolution.pdf}\label{fig:lpsolution}}
+\caption{Integrality gap of the integer program. White circles represent points in $P$.}
 \label{fig:integralitygap}
 \end{figure}
 
-To illustrate how this is a big problem, suppose we had a rounding scheme from the linear programming relaxation. Lets call the rounded solution $R$, $LP$ will be the optimum of the relaxed linear program, and $ILP$ will be the optimum of the integer linear program. What we know is that
+To illustrate why this is a big problem, suppose we had a rounding scheme from the linear programming relaxation. We call the rounded solution $R$, and we let $LP$ be the optimum of the relaxed linear program, and we let $ILP$ be the optimum of the integer linear program. We know that
 \[ LP \leq ILP \leq R \leq O(\log n)LP \]
-However, without computing $ILP$, we won't be able to show that $R$ and $ILP$ are close ($O(1)$-factor away). This means that typical rounding scheme proofs won't work. 
+It would be desirable to show that $R$ is within a constant factor of $LP$ by bounding it between $LP$ and $O(1)LP$. However, the above argument shows that $O(\log(n))LP$ is a tight upper bound on $R$, and so a typical rounding scheme will not work.
 
 \section{Extending the Method}
 
-Our hope is to show that this technique of producing an unbounded integrality gap extends to all linear programming interpretations of arboral satisfaction. However, it seems very difficult to make such claims, and so we have only focused on ``natural" linear programming interpretations.
+Our hope was to show that this technique of producing an unbounded integrality gap extends to all linear programming interpretations of arboral satisfaction. The intuition we had was that simply changing the weights of the constraint we wrote down or condensing them into fewer constraints should not eliminate an unbounded integrality gap. However, we have been unable to confirm this. In this section, we present a number of observations we have made about general ILP's for the points in the plane problem. 
 
-We make the one assumption that all variables corresponds to points, and that the variable is set to $1$ when the point is included in the set $Q$ and $0$ otherwise. Without loss generality, we can assume that all contraints are either $\leq$ contraints, and there are an additional $n$ contraints to set the variables which corresponds to points in $P$ to $1$. Also, without loss of generality, we can rescale the contraints so that they are all $\leq 1$. 
+The assumption we make is that each variable corresponds to one grid point, and vice versa, and that the variable is set to $1$ when the point is included in the set $Q$ and is 0 otherwise. We then know that there must be $n$ constraints that set the $n$ points in $P$ equal to 1, and without loss of generality, we can say that all the other constraints have a RHS of the form $\leq 1$. The last claim is slightly nontrivial, as a scaling / flipping signs argument only guarantees that constraints are of the form $\leq \pm 1$. However, we rule out all constraints of the form $\leq -1$, since this constraint must be satisfied in the case where all variables are set to 0 (since the case of no points on the grid is arborally satisfied, the inequality constraints must be satisfied). 
+
+For the following observations, we use variables to refer to both variables in the linear program, as well as the corresponding points on the grid. This language is not technically correct, but it allows us to state theorems more cleanly.
 
 \begin{observation}
-For each two points $x$ and $y$ which form a rectangle, there exists a contraint $C$, such that
+For each pair of points $x$ and $y$ that span a rectangle, there exists a contraint $C$ such that
 \[ C: a_1x + a_2y + \dots \leq 1 \]
 where $a_1 \leq 1$, $a_2 \leq 1$ and $a_1 + a_2 > 1$. 
 \end{observation}
 
 \begin{proof}
-This just follows from the fact that if there is only one point, the set is arborally satisfied. Which means that all positive coefficients are less than $1$. Also since setting points $x$ and $y$ alone is not arborally satisfied, there exists a contraint which is violated.
+This follows from the fact that if there is only one point, the set is arborally satisfied. This means that all positive coefficients are less than or equal to $1$. Also, the point set where $x$ and $y$ are the only two points present is not arborally satisfied, so plugging in $x = y = 1$ and setting all variables equal to 0 must violate this constraint. This gives $a_1 + a_2 > 1$.
 \end{proof}
 
 \begin{observation}
-For each two points $x$ and $y$ which form a rectangle, let $z$ be a different point on a corner of the rectangle spanned by $x$ and $y$, then
-\[ C: a_1x + a_2y - a_zz + \dots \leq 1 \]
-where $a_1 + a_2 - a_z \leq 1$ and so $a_z < 0$.
+For each pair of points $x$ and $y$ which span a rectangle, where $z$ is a different point on the corner of the rectangle spanned by $x$ and $y$, we have
+\[ C: a_1x + a_2y + a_zz + \dots \leq 1 \]
+where $a_1 + a_2 + a_z \leq 1$ and so $a_z < 0$.
 \end{observation}
 
 \begin{proof}
-This follows from the fact that constraint $C$ was not satisfied without $z$ but it is satisfied with $z = 1$. 
-\end{proof}
+This follows from the fact that constraint $C$ was not satisfied in the case where $x = y = 1$ and all other variables are set to 0, but is satisfied when $x = y = z = 1$, and all other variables are set to 0. We see that $a_1 + a_2 > 1$ and $a_1 + a_2 + a_1 \leq 1$ implies $a_z < 0$. \end{proof}
 
-In fact, we can generalize the statement to all points in the edges.
+In fact, we can make a more general version of this statement.
+
 \begin{observation}
-For each two points $x$ and $y$ which form a rectangle, let $z_1$ and $z_2$ be points on the edge of the rectangle across from each other, then
-\[ C : a_1x + a_2y + a_{z_1}z_1 + a_{z_2} + \dots \leq 1\]
-where $a_1 + a_2 + a_{z_1} + a_{z_2} \leq 1$. 
+For each pair of points $x$ and $y$ which span a rectangle, let $z_1$ and $z_2$ be points on the edge of the rectangle that are directly across from each other. Then we have 
+\[ C : a_1x + a_2y + a_{z_1}z_1 + a_{z_2}z_2 + \dots \leq 1\]
+where $a_1 + a_2 + a_{z_1} + a_{z_2} \leq 1$ and so $a_{z_1} + a_{z_2} < 0$. 
 \end{observation}
+
+\begin{proof}
+Identical to the proof of Observation 2, but now with an extra variable. \end{proof}
+
+We wanted to use observations such as these to make more specific statements about the structure of the constraints, which would have allowed us to come up with (possibly weighted) variants of the feasible solution from Section 6.
 
 \begin{comment}
 We make three assumptions about ``natural" linear programs for this problem:
@@ -226,9 +238,7 @@ For each point $b_{ij}$ in the given point set $P$, increase $b_{i+1,j}$ by $w_{
 
 \section{Conclusions}
 
-Our results have shown that the natural linear programming interpretations of the points in the plane do not seem to be particularly helpful in solving the problem. Standard ways of tackling linear programs such as looking at their duals or trying to transform them into max flow problems are not useful for the linear programs we were able to write down.
-
-We were able to show an unbounded integrality gap, and we hope that we can show an unbounded gap for all linear programs.
+Our results have shown that the natural linear programming interpretations of the points in the plane do not seem to be particularly helpful in solving the points in the plane problem. Most of the standard methods of tackling linear programs failed, and so we turned our attention to trying to show that perhaps linear programs are not the way to approach this problem. We were able to show an unbounded integrality gap for the specific LP we studied, and we hope that our ideas can be extended to eliminate more general classes of LPs from consideration.
 
 \bibliography{references}
 \bibliographystyle{plain}
