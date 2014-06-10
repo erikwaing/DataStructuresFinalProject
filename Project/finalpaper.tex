@@ -16,8 +16,7 @@
 \usepackage{cite}
 \parindent 0pt		 % sets leading space for paragraphs
 \author{Fermi Ma and Erik Waingarten}
-\title{Data Structures Final Project:\\
-A Linear Programming Approach to Dynamic Optimality}
+\title{A Linear Programming Approach to Dynamic Optimality}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -38,6 +37,10 @@ Given a set $P$ of $n$ points $(x_i,y_i)$ in the $xy$ plane, no two on a common 
 }
 
 Point sets $Q$ that satisfy the condition that any two points in $Q$ that span a rectangle contain another point in $Q$ are referred to as \emph{arborally satisfied} point sets.
+
+The motivation for this problem comes from the dynamic optimality conjecture, first posed by Sleator and Tarjan. The conjecture says that given any binary search tree accessing a set of points $A$ with a cost $C(A)$, the splay tree will perform the same accesses with cost $O(n + C(A))$. The binary search tree can only access elements from the root, traveling down through its children, and it can make a tree rotation at any point is the accesses. The dynamic optimality conjecture says that the splay tree is ``as good'' as any other binary search tree. 
+
+Ever since the conjecture, there has been a search for either a proof to show that splay trees are indeed optimal, or another binary search tree that is optimal. Demaine et Al. showed in CITE HERE that finding an optimal binary search tree in the offline case (all accesses are given before hand) is equivalent to determining an $O(1)$-approximation for the points on the plane problem.
 
 It is natural to restrict attention to the grid of intersection points ``induced" by the set of points $P$: extend horizontal and vertical lines through each point in $P$ and consider only the $O(n^2)$ intersections of these lines. It is easy to show that in any arborally satisfied point set $P$, points that are not grid intersections can be moved to positions that are. An example of such a grid is given Figure~\ref{fig:instance}.
 
@@ -175,7 +178,7 @@ demonstrates the lower bound of the integrality gap. Figure~\ref{fig:optimum} sh
 
 To illustrate why this is a big problem, suppose we had a rounding scheme from the linear programming relaxation. We call the rounded solution $R$, and we let $LP$ be the optimum of the relaxed linear program, and we let $ILP$ be the optimum of the integer linear program. We know that
 \[ LP \leq ILP \leq R \leq O(\log n)LP \]
-It would be desirable to show that $R$ is within a constant factor of $LP$ by bounding it between $LP$ and $O(1)LP$. However, the above argument shows that $O(\log(n))LP$ is a tight upper bound on $R$, and so a typical rounding scheme will not work.
+It would be desirable to show that $R$ is within a constant factor of $ILP$ by bounding it between $LP$ and $O(1)LP$. However, the above formulation will only allow us to show that $R$ is an $O(\log n)$-approximation away from $ILP$.
 
 \section{Extending the Method}
 
