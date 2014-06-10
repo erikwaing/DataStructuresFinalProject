@@ -94,7 +94,7 @@ If either of the corner vertices are not present, the rectangle corresponding to
 
 If we have such a constraint for every possible rectangle, we will have an arborally satisfied set. Note that this integer linear program will solve for the exact optimal solution.
 
-The primary issue with writing constraints of this form is this is that they are possibly quadratic in size, which makes it unlikely for them to yield useful approximation techniques. It turns out that we can simplify the constraints to be linear in size, as we show in Section 4, and this seems more promising since the dynamic optimality problem is focused on constant factor approximations. 
+It turns out that we can simplify the constraints to be linear in size, as we show in Section 4. This seems to be more promising since doing so will decrease the integrality gap. The linear-sized constraints will give an ILP that is exactly equivalent to the ILP given above, but the non-integral solutions to the linear-sized constraint system will turn out to be feasiable solutions to the quadratic-sized constraint system. This will mean that the convex set of solutions for the quadratic-sized constraints will be strictly larger than for the linear-sized constraints, implying a larger integrality gap. 
 
 \section{A Second Attempt: Reducing Constraint Size}
 \label{A Second Attempt: Reducing Constraint Size}
