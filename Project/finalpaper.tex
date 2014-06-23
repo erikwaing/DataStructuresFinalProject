@@ -47,7 +47,7 @@ This problem is motivated by the dynamic optimality conjecture \cite{SplayTrees}
 \end{quote}
 }
 
-Demaine et Al. showed in \cite{geometryBST} that finding an optimal binary search tree in the offline case is equivalent to determining an $O(1)$-approximation for the points on the plane problem.
+Demaine et al. showed in \cite{geometryBST} that finding an optimal binary search tree in the offline case is equivalent to determining an $O(1)$-approximation for the points on the plane problem.
 
 Linear programming relaxation is a common approach for obtaining $O(1)$-approximations to problems, and thus we consider a natural interpretation of this problem as an integer linear program. We then show why the relaxation of this linear program will \emph{not} work to produce an $O(1)$-approximation.
 
@@ -60,11 +60,15 @@ Linear programming relaxation is a common approach for obtaining $O(1)$-approxim
 
 \section{Two Linear Programming Interpretations}
 
-We can directly correspond an integer linear program (ILP) to the problem by assigning an indicator variable to each grid point, where the variable is set to 1 if the point is included and is 0 otherwise. This immediately gives us $n$ constraints, one for each variable corresponding to a point in $P$ (setting them all equal to 1). This gives the obvious objective of minimizing the sum of all the variables, and leaves the task of writing down the arboral satisfaction property in terms of other linear constraints.
+Point sets $Q$ satisfying the condition that any two points in $Q$ spanning a rectangle contain another point in $Q$ are referred to as \emph{arborally satisfied} point sets.
+
+It is natural to restrict attention to the grid of intersection points ``induced" by the set of points $P$: extend horizontal and vertical lines through each point in $P$ and consider only the $O(n^2)$ intersections of these lines. It is easy to show that in any arborally satisfied point set $P$, points that are not grid intersections can be moved to positions that are. An example of such a grid is given Figure~\ref{fig:instance}.
+
+We can directly correspond an integer linear program (ILP) to the problem by assigning an indicator variable to each grid point, where the variable is set to 1 if the point is included and is 0 otherwise. This immediately gives us $n$ constraints, one for each variable corresponding to a point in $P$ (setting them all equal to 1). This gives the obvious objective of minimizing the sum of all the variables, and leaves the task of writing down the arboral satisfaction property in terms of other constraints.
+
+We label the indicator variables $b_{jk}$, where $j$ and $k$ are labels on the grid intersection points (labelled so that $b_{00}$ is the lower left grid point, $b_{01}$ is the point directly above, and $b_{10}$ is the point directly to the right).
 
 \subsection{Quadratic Constraint Size}
-
-We set up the indicator variables as explained in the introduction, labeling them as $b_{jk}$, where $j$ and $k$ are labels on the grid intersection points (labelled so that $b_{00}$ is the lower left grid point, $b_{01}$ is the point directly above, and $b_{10}$ is the point directly to the right).
 
 Consider the following set of constraints:
 
@@ -73,7 +77,7 @@ Consider the following set of constraints:
 2b_{im} + 2b_{nj} - \left(\sum_{i \leq k \leq n}\sum_{j\leq l \leq m} b_{kl}\right)  &\leq 1  \hspace{.3in} \forall i<n, m<j
 \end{align}
 
-We claim that these constraints exactly capture arboral satisfaction. Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles (explained in Figure 2).
+These constraints exactly capture arboral satisfaction. Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles (explained in Figure 2).
 
 To see the equivalence, first consider constraints of type (1). If points in the grid corresponding to $b_{ij}$ and $b_{nm}$ are present, the rectangle they span must be satisfied by some point corresponding to $b_{kl}$ such that   $i\leq k \leq n$ and $j \leq l \leq m$ (although it cannot equal to $b_{ij}$ or $b_{nm}$). The constraint ensures precisely this: if $b_{ij} = b_{nm} = 1$, at least one other $b_{kl}$ in the parenthesized term must be set to 1, or else the entire left hand side will be a quantity greater than 1. The constraints of type (2) work the same way.
 
@@ -87,9 +91,7 @@ To see the equivalence, first consider constraints of type (1). If points in the
 
 \subsection{Linear Constraint Size}
 
-By definition, we know that arborally satisfied point sets have all rectangles satisfied by some point on the interior (including edges). It turns out that a short inductive argument shows that all rectangles are in fact satisfied by some point on their edges ~\cite{geometryBST}. This allows us to reduce the size of the constraints from $O(n^2)$ to $O(n)$.
-
-We thus claim that the following set of constraints captures arboral satisfaction: 
+By definition, arborally satisfied point sets have all rectangles satisfied by some point on the interior (including edges). It turns out that a short inductive argument shows that all rectangles are in fact satisfied by some point on their edges ~\cite{geometryBST}. Thus, we can reduce the constraint size by ``only" requiring that rectangles be satisfied on their edges. This gives the following set of constraints: 
 
 \begin{align}
 b_{ij} + b_{nm} - \left(\sum_{l=i+1}^{n-1} (b_{lj}+b_{lm}) + \sum_{l=j+1}^{m-1} (b_{il} + b_{nl}) + b_{im} + b_{nj} \right) &\leq& 1 & \hspace{.3in} \forall i<n, j<m \\
@@ -100,7 +102,11 @@ Constraints of type (3) correspond to all possible ``positive" rectangles, and c
 
 \section{An Unbounded Integrality Gap}
 
-We were finally able to show that the linear programming relaxation of our ILP (given by constraints (3) and (4)) would not yield an $O(1)$-approximation.
+Both of these linear programs will fail to yield $O(1)$ approximation algorithms. There are known instances of the problem that require $O(n\log n)$ additional points (NEED CITATION FOR THIS). 
+
+In any of these instances, we can satisfy the ILP by setting all variables corresponding to neighboring points of points in $P$ to $0.5$ (Refer to Figure 3b for the setup: white circles are variables set to 1, red circles are variables set to 0.5, and empty spots are set to 0).
+
+To see that this solution is feasible, we just check cases. Note that every constraint corresponding to rectangles spanned by points in $P$ will be satisfied, since they contain at least 2 points of value $0.5$. All constraints corresponding to rectangles where one corner is set to $1$ and the opposite corner is set to $0.5$ will satisfied, as at least one other variable of value $0.5$ (adjacent to the corner set to 1) will be subtracted away. Finally each constraint corresponding to a rectangle with opposite corners set to $0.5$ will automatically be satisfied. This feasible solution simply adds 2 to the sum of all the variables for each point in $P$, and is therefore $O(n)$. This implies an integrality gap is $O(\log n)$.
 
 \begin{figure}
 \centering
@@ -110,30 +116,7 @@ We were finally able to show that the linear programming relaxation of our ILP (
 \label{fig:integralitygap}
 \end{figure}
 
-
-
-
-
-There are known instances of the problem that require $O(n\log n)$ additional points. In any of these instances, we can satisfy the ILP by setting all variables corresponding to neighboring points of points in $P$ to $0.5$ (Refer to Figure 3b for the setup: white circles are variables set to 1, red circles are variables set to 0.5, and empty spots are set to 0).
-
-To see that this solution is feasible, we just check cases. Note that every constraint corresponding to rectangles spanned by points in $P$ will be satisfied, since they contain at least 2 points of value $0.5$. All constraints corresponding to rectangles where one corner is set to $1$ and the opposite corner is set to $0.5$ will satisfied, as at least one other variable of value $0.5$ (adjacent to the corner set to 1) will be subtracted away. Finally each constraint corresponding to a rectangle with opposite corners set to $0.5$ will automatically be satisfied. This feasible solution simply adds 2 to the sum of all the variables for each point in $P$, and is therefore $O(n)$. This implies an integrality gap is $O(\log n)$. 
-
 Figure 3a compares the linear ``solution" of Figure 3b with the optimal solution for a specific instance of the problem. 
-
-
-
-
-We consider a natural interpretation of the points in the plane problem as a linear program
-linear programming interpretation of the points in the plane problem, as well as a simplification.
-
-Point sets $Q$ satisfying the condition that any two points in $Q$ spanning a rectangle contain another point in $Q$ are referred to as \emph{arborally satisfied} point sets.
-
-It is natural to restrict attention to the grid of intersection points ``induced" by the set of points $P$: extend horizontal and vertical lines through each point in $P$ and consider only the $O(n^2)$ intersections of these lines. It is easy to show that in any arborally satisfied point set $P$, points that are not grid intersections can be moved to positions that are. An example of such a grid is given Figure~\ref{fig:instance}.
-
-
-We can directly correspond an integer linear program (ILP) to the problem by assigning an indicator variable to each grid point, where the variable is set to 1 if the point is included and is 0 otherwise. This immediately gives us $n$ constraints, one for each variable corresponding to a point in $P$ (setting them all equal to 1). This gives the obvious objective of minimizing the sum of all the variables, and leaves the task of writing down the arboral satisfaction property in terms of other linear constraints. While other linear programming approaches may exist, this setup feels the most natural and so we restrict our attention to it.
-
-We found that it was possible to write down an exact ILP with $O(n^2)$ constraints of size $O(n^2)$, and another ILP with $O(n^2)$ constraints of size $O(n)$ with the same optimal solutions to the original problem. We attempted to use the second ILP formulation to generate an approximation algorithm for the problem by considering the relaxed linear program, but methods such as viewing the problem as a max flow problem and taking the dual proved unsuccessful. Our experiments indicated that the ILP had an integrality gap strictly greater than 1, and we were later able to demonstrate an unbounded integrality gap for the specific ILP we had written down. This indicates that common approximation algorithm for that specific ILP will not work, and we conjecture that an unbounded integrality gap exists for any ILP formulation of the problem. We were not able to prove the conjecture, but we provide some useful observations.
 
 
 \section{Conclusions}
