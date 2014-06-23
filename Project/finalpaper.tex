@@ -60,13 +60,17 @@ Linear programming relaxation is a common approach for obtaining $O(1)$-approxim
 
 \section{Two Linear Programming Interpretations}
 
-Point sets $Q$ satisfying the condition that any two points in $Q$ spanning a rectangle contain another point in $Q$ are referred to as \emph{arborally satisfied} point sets.
+\subsection{Basic Setup}
+
+We consider two linear programming interpretations of this problem.
 
 It is natural to restrict attention to the grid of intersection points ``induced" by the set of points $P$: extend horizontal and vertical lines through each point in $P$ and consider only the $O(n^2)$ intersections of these lines. It is easy to show that in any arborally satisfied point set $P$, points that are not grid intersections can be moved to positions that are. An example of such a grid is given Figure~\ref{fig:instance}.
 
-We can directly correspond an integer linear program (ILP) to the problem by assigning an indicator variable to each grid point, where the variable is set to 1 if the point is included and is 0 otherwise. This immediately gives us $n$ constraints, one for each variable corresponding to a point in $P$ (setting them all equal to 1). This gives the obvious objective of minimizing the sum of all the variables, and leaves the task of writing down the arboral satisfaction property in terms of other constraints.
+As in \cite{geometryBST}, we refer to point sets $Q$ satisfying the condition that any two points in $Q$ spanning a rectangle contain another point in $Q$ are referred to as \emph{arborally satisfied} point sets.
 
-We label the indicator variables $b_{jk}$, where $j$ and $k$ are labels on the grid intersection points (labelled so that $b_{00}$ is the lower left grid point, $b_{01}$ is the point directly above, and $b_{10}$ is the point directly to the right).
+We can directly correspond an integer linear program (ILP) to the problem by assigning an indicator variable $b_{jk}$ to each grid point, where the variable is set to 1 if the point is included and is 0 otherwise, and $j$ and $k$ are labels on the grid intersection points (labelled so that $b_{00}$ is the lower left grid point, $b_{01}$ is the point directly above, and $b_{10}$ is the point directly to the right). 
+
+This immediately gives us $n$ constraints, one for each variable corresponding to a point in $P$ (setting them all equal to 1). The linear programming objective is to minimize the sum of all the variables; the task that remains capturing the arboral satisfaction property with further constraints. 
 
 \subsection{Quadratic Constraint Size}
 
@@ -106,7 +110,9 @@ Both of these linear programs will fail to yield $O(1)$ approximation algorithms
 
 In any of these instances, we can satisfy the ILP by setting all variables corresponding to neighboring points of points in $P$ to $0.5$ (Refer to Figure 3b for the setup: white circles are variables set to 1, red circles are variables set to 0.5, and empty spots are set to 0).
 
-To see that this solution is feasible, we just check cases. Note that every constraint corresponding to rectangles spanned by points in $P$ will be satisfied, since they contain at least 2 points of value $0.5$. All constraints corresponding to rectangles where one corner is set to $1$ and the opposite corner is set to $0.5$ will satisfied, as at least one other variable of value $0.5$ (adjacent to the corner set to 1) will be subtracted away. Finally each constraint corresponding to a rectangle with opposite corners set to $0.5$ will automatically be satisfied. This feasible solution simply adds 2 to the sum of all the variables for each point in $P$, and is therefore $O(n)$. This implies an integrality gap is $O(\log n)$.
+This solution turns out to always be feasible. Note that every constraint corresponding to rectangles spanned by points in $P$ will be satisfied, since they contain at least 2 points of value $0.5$. All constraints corresponding to rectangles where one corner is set to $1$ and the opposite corner is set to $0.5$ will satisfied, as at least one other variable of value $0.5$ (adjacent to the corner set to 1) will be subtracted away. Finally each constraint corresponding to a rectangle with opposite corners set to $0.5$ will automatically be satisfied. This solution simply adds 2 to the sum of all the variables for each point in $P$, and is therefore $O(n)$. 
+
+This, combined with the existence of instances of the problem that require $O(n\log n)$ additional points, implies an $O(\log n)$ integrality gap for both linear programs.
 
 \begin{figure}
 \centering
@@ -116,12 +122,18 @@ To see that this solution is feasible, we just check cases. Note that every cons
 \label{fig:integralitygap}
 \end{figure}
 
+\begin{comment}
+I'm thinking we might just be able to remove this line:
+
 Figure 3a compares the linear ``solution" of Figure 3b with the optimal solution for a specific instance of the problem. 
+
+as well as just removing Figure 3a. Do we actually need to know what the optimal solution is here?
+\end{comment}
 
 
 \section{Conclusions}
 
-Our results have shown that the natural linear programming interpretations of the points in the plane do not seem to be particularly helpful in solving the points in the plane problem. Most of the standard methods of tackling linear programs failed, and so we turned our attention to trying to show that perhaps linear programs are not the way to approach this problem. We were able to show an unbounded integrality gap for the specific LP we studied, and we hope that our ideas can be extended to eliminate more general classes of LPs from consideration.
+We have shown that two natural ILP interpretations of the points in the plane will not yield an $O(1)$ approximation algorithm for the problem. However, we still cannot rule out LP relaxation entirely, as a more complex ILP may turn out to be useful. Much work remains to be done on this problem, but we hope that our negative results will help speed up the process.
 
 \bibliography{references}
 \bibliographystyle{plain}
