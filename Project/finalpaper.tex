@@ -15,7 +15,7 @@
 \usepackage{subfigure}
 \usepackage{cite}
 \parindent 0pt		 % sets leading space for paragraphs
-\author{Fermi Ma and Erik Waingarten}
+\author{Erik D. Demaine, Fermi Ma, Aaron Sidford, and Erik Waingarten}
 \title{A Linear Programming Approach to Dynamic Optimality}
 
 \newtheorem{theorem}{Theorem}
@@ -53,16 +53,16 @@ Linear programming relaxation is a common approach for obtaining $O(1)$-approxim
 
 \begin{figure}
 \centering
-\includegraphics[width=0.3\linewidth]{instance.pdf}
-\caption{Instance of points in the plane}
+\includegraphics[width=0.6\linewidth]{Image1.pdf}
+\caption{Instance of points in the plane with grid lines}
 \label{fig:instance}
 \end{figure}
 
-\section{Two Linear Programming Interpretations}
+\section{Equivalent Integer Linear Programs}
 
 \subsection{Basic Setup}
 
-We consider two linear programming interpretations of this problem.
+We consider two integer linear programming interpretations of this problem.
 
 It is natural to restrict attention to the grid of intersection points ``induced" by the set of points $P$: extend horizontal and vertical lines through each point in $P$ and consider only the $O(n^2)$ intersections of these lines. It is easy to show that in any arborally satisfied point set $P$, points that are not grid intersections can be moved to positions that are. An example of such a grid is given Figure~\ref{fig:instance}.
 
@@ -84,11 +84,18 @@ Consider the following set of constraints:
 These constraints exactly capture arboral satisfaction. Constraints of type (1) correspond to all possible ``positive" rectangles, and constraints of type (2) correspond to all possible ``negative" rectangles (explained in Figure 2).
 
 To see the equivalence, first consider constraints of type (1). If points in the grid corresponding to $b_{ij}$ and $b_{nm}$ are present, the rectangle they span must be satisfied by some point corresponding to $b_{kl}$ such that   $i\leq k \leq n$ and $j \leq l \leq m$ (although it cannot equal to $b_{ij}$ or $b_{nm}$). The constraint ensures precisely this: if $b_{ij} = b_{nm} = 1$, at least one other $b_{kl}$ in the parenthesized term must be set to 1, or else the entire left hand side will be a quantity greater than 1. The constraints of type (2) work the same way.
-
+\begin{comment}
 \begin{figure}
 \centering
-\subfigure[Positive rectangle]{\includegraphics[width=.2\linewidth]{negative.pdf}\label{fig:negative}}
+\subfigure[Positive rectangle]{\includegraphics[width=.2\linewidth]{Image2.pdf}\label{fig:negative}}
 \subfigure[Negative rectangle]{\includegraphics[width=0.2\linewidth]{positive.pdf}\label{fig:positive}}
+\caption{Positive and negative rectangles: black corresponds to points that are included, and white corresponds to the points not included}
+\label{fig:rectangles}
+\end{figure}
+\end{comment}
+\begin{figure}
+\centering
+\includegraphics[width=0.4\linewidth]{Image2.pdf}
 \caption{Positive and negative rectangles: black corresponds to points that are included, and white corresponds to the points not included}
 \label{fig:rectangles}
 \end{figure}
@@ -113,14 +120,22 @@ In any of these instances, we can satisfy the ILP by setting all variables corre
 This solution turns out to always be feasible. Note that every constraint corresponding to rectangles spanned by points in $P$ will be satisfied, since they contain at least 2 points of value $0.5$. All constraints corresponding to rectangles where one corner is set to $1$ and the opposite corner is set to $0.5$ will satisfied, as at least one other variable of value $0.5$ (adjacent to the corner set to 1) will be subtracted away. Finally each constraint corresponding to a rectangle with opposite corners set to $0.5$ will automatically be satisfied. This solution simply adds 2 to the sum of all the variables for each point in $P$, and is therefore $O(n)$. 
 
 This, combined with the existence of instances of the problem that require $O(n\log n)$ additional points, implies an $O(\log n)$ integrality gap for both linear programs.
-
+\begin{comment}
 \begin{figure}
 \centering
 \subfigure[Optimal solution to integer linear program]{\includegraphics[width=0.4\linewidth]{optimum.pdf}\label{fig:optimum}}
-\subfigure[Feasible solution to linear program.]{\includegraphics[width=.4\linewidth]{lpsolution.pdf}\label{fig:lpsolution}}
+\subfigure[Feasible solution to linear program.]{\includegraphics[width=.4\linewidth]{Image3.pdf}\label{fig:lpsolution}}
 \caption{Integrality gap of the integer program. White circles represent points in $P$.}
 \label{fig:integralitygap}
 \end{figure}
+\end{comment}
+\begin{figure}
+\centering
+\includegraphics[width=0.5\linewidth]{Image3.pdf}
+\caption{Integrality gap of the integer program. Black circles represent points in $P$ given weight 1, red circles represent points included with weight $\frac{1}{2}$, and white circles are not included and given weight 0.}
+\label{fig:integralitygap}
+\end{figure}
+
 
 \begin{comment}
 I'm thinking we might just be able to remove this line:
